@@ -23,7 +23,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'core',
     'django_countries',
-    'crispy_forms'
+    'crispy_forms',
+    'django_cleanup.apps.CleanupConfig',
+
 ]
 
 MIDDLEWARE = [

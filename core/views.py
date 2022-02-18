@@ -1,3 +1,4 @@
+from itertools import product
 import random
 import re
 import string
@@ -20,7 +21,7 @@ import requests
 from decimal import Decimal
 from sslcommerz_python.payment import SSLCSession
 
-from .forms import CheckoutForm, CouponForm, RefundForm, CommentForm
+from .forms import CheckoutForm, CouponForm, RefundForm, CommentForm, ProductForm
 from .models import (Item, Cart, OrderItem, Address, Comment, Payment, Coupon,
                      Refund, Category, UserProfile, ItemMultipleImages)
 
@@ -44,9 +45,10 @@ class HomeView(ListView):
         if search_by:
             queryset = queryset.filter(
                 Q(item_category__category__icontains=search_by) |
-                Q(item_name__icontains=search_by)
+                Q(item_name__icontains=search_by) |
+                Q(item_number__icontains=search_by)
             )
-        return queryset.order_by('id')
+        return queryset.order_by('-slug')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -616,4 +618,70 @@ def complete_payment(request, tran_id, payment_type):
         order.ordered = True
         order.save()
     return HttpResponseRedirect(reverse('core:item_list'))
+
+
+class AddProductView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        product_form = ProductForm()
+        context = {
+            "form": product_form
+        }
+        return render(self.request, 'ProductsPages/add_product.html', context)
+
+    def post(self, request, *args, **kwargs):
+        product_form = ProductForm(request.POST, request.FILES or None)
+        if product_form.is_valid():
+            slug = self.request.POST['slug']
+            item_number = self.request.POST['item_number']
+            discount_price = self.request.POST['discount_price']
+           
+            try:
+                slug = Item.objects.filter(slug = slug).first()
+                item_number = Item.objects.filter(item_number = item_number).first()  
+                
+                if slug or item_number or slug != item_number:
+                    messages.error(request, "Item with Part number Already Exist or Slug & Item Number Must be Same")
+                    context = {
+                        "form": product_form
+                    }
+                    return render(self.request, 'ProductsPages/add_product.html', context)
+                elif int(discount_price) > 99:
+                    messages.error(request, "Discount Not Greater Than 99%")
+                    context = {
+                        "form": product_form
+                    }
+                    return render(self.request, 'ProductsPages/add_product.html', context)
+                else:
+                    product_form.save()
+                    messages.success(request,'product Added Successfully')
+                    product_form = ProductForm()
+                    context = {
+                        "form": product_form
+                    }
+                    return render(self.request, 'ProductsPages/add_product.html', context)
+            
+            except Exception as e:
+                return HttpResponse(e)
+        else:
+            messages.error(request, product_form.errors)
+            context = {
+                "form": product_form
+            }
+            return render(self.request, 'ProductsPages/add_product.html', context)
+        
+
+
+
+class EditProductView(LoginRequiredMixin, View):
+    pass
+
+def DeleteProductView(request, slug):
+    # print(slug)
+    try:
+        product = Item.objects.filter(slug = slug)
+        print(product)
+        product.delete()
+        return redirect('/')
+    except Exception as e:
+        return HttpResponse(e)
 

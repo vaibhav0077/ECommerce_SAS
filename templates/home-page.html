@@ -40,8 +40,25 @@
                 $<del>{{item.price}}</del><br>
                 $<strong>{{item.price|discount_price_calcualte:item.discount_price}}</strong>
               </h4>
-
+              
             </div>
+            <div>
+              {% if request.user.is_superuser %}
+              <div>
+                <button>
+                  <a href="edit_product/{{item.item_number}}" class="grey-text">
+                    <b>Edit Product</b>
+                  </a>
+                </button>
+                <button>
+                  <a href="delete_product/{{item.item_number}}" class="grey-text">
+                    <b>Delete Product</b>
+                  </a>
+                </button>
+              </div>
+            {% endif %}
+            </div>
+           
 
           </div>
 

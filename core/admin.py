@@ -3,7 +3,20 @@ from .models import (Item, OrderItem, Cart, Address, Category, Comment,
                      Payment, Coupon, Refund, UserProfile, ItemMultipleImages)
 
 admin.site.register(UserProfile)
-admin.site.register(Item)
+class ItemsAdmin(admin.ModelAdmin):
+    class Meta:
+        model = Item
+    list_display = ['slug',
+                    'item_number',
+                    'item_name',
+                    'item_category',
+                    'price',
+                    'discount_price',
+                    'item_image',
+                    'labels',
+                    'description']
+
+admin.site.register(Item, ItemsAdmin)
 admin.site.register(Category)
 
 

@@ -47,12 +47,15 @@ class Item(models.Model):
     item_name = models.CharField(max_length=100)
     item_category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.FloatField()
-    discount_price = models.FloatField(blank=True, null=True)
+    discount_price = models.FloatField(blank=True, null=True, default=40.0)
     item_image = models.ImageField(upload_to='items_images/')
     labels = models.CharField(choices=LABEL_CHOICES, max_length=2)
     
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
     description = models.TextField()
+
+    class Meta(object):
+        ordering = ['-slug']
 
     def __str__(self):
         return self.slug

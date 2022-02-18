@@ -39,6 +39,21 @@
       
       <!-- left side of Navbar -->
       <ul class="navbar-nav ml-auto nav-flex-icons">
+        {% if request.user.is_superuser %}
+        <li class="nav-item">
+          <div class="dropdown">
+            <a class="dropdown-toggle my-auto nav-link" role="button" id="dropdownMenuButton" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              Product
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="/add_product">Add Product</a>
+              <a class="dropdown-item" href="#">Add Product Category</a>
+              <a class="dropdown-item" href="##">Modify Product</a>
+            </div>
+          </div>
+        </li>
+        {% endif %}
         <li class="nav-item float-right">
           <a class="nav-link " href="/">Home
           </a>

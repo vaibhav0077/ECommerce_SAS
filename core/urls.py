@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (HomeView, ItemDetailView, add_to_cart, remove_coupon, remove_from_the_cart, OrderSummary,
+from .views import (AddProductView, DeleteProductView, EditProductView, HomeView, ItemDetailView, add_to_cart, remove_coupon, remove_from_the_cart, OrderSummary,
                     remove_single_from_the_cart, CheckoutView, PaymentView, AddCouponView,
                     RequestRefundView, add_likes_to_product, CustomerProfileView, add_comment_to_item,
                     SSLPayment, complete, complete_payment)
@@ -26,5 +26,12 @@ urlpatterns = [
      path('ssl_payment/', SSLPayment.as_view(), name='ssl_payment'),
      path('complete/', complete, name='complete'),
      path('complete_payment/<tran_id>/<payment_type>/',complete_payment, name='complete_payment'),
+
+     # Product Detailing
+
+     path('add_product', AddProductView.as_view(), name='add_product'),
+     path('edit_product/<slug>', EditProductView.as_view(), name='edit_product'),
+     path('delete_product/<slug>', DeleteProductView, name='delete_product'),
+
 
 ]
